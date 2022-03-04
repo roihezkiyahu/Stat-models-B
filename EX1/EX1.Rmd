@@ -1,6 +1,6 @@
 ---
 title: "stat models B EX1"
-author: "roi hezkiyahu and dov tuch"
+author: "Roi hezkiyahu - 205884018 Dov tuch - 207049719"
 date: "24 2 2022"
 output: html_document
 ---
@@ -61,7 +61,7 @@ $E[MSA] = E[\frac{SSA}{I-1}]= \sigma^2 + \frac{\sum_{i=1}^In_i\alpha_i^2}{I-1}$
 
 # Q.3
 
-```{r message=FALSE, warning=FALSE, include=FALSE}
+```{r echo=TRUE, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(Stat2Data)
 library(glue)
@@ -110,7 +110,7 @@ glue("F test pvalue is {f_test$p.value} therefore assumption for equal variance 
 **ב**
 
 ```{r}
-t_test <- t.test(W_C,W_L)
+t_test <- t.test(W_C,W_L,var.equal = TRUE)
 t_test_pv <- t_test$p.value
 aov_pos <- aov(Written~Position,data = Ricci_W)
 pv_aov <- summary(aov_pos)[[1]][["Pr(>F)"]][1]
@@ -126,10 +126,10 @@ print("pvalue for both test > 0.05 therefore we will not reject the null and con
 **ג**
 
 ```{r}
-glue("we can see that the pvalues are rather close")
+glue("we can see that the pvalues are the same")
 t_statistic <- t_test$statistic
 F_statistic <- summary(aov_pos)[[1]][["F value"]][1]
-glue("we can also see that t_statistic^2:{round(t_statistic^2,4)} is around F_statistic:{round(F_statistic,4)}")
+glue("we can also see that t_statistic^2:{round(t_statistic^2,4)} is the same as F_statistic:{round(F_statistic,4)}")
 ```
 
 *מבחן אנובה עבור 2 קבוצות שקול למבחן טי עבור 2 קבוצות וזאת מכיוון ובמקרה זה יש שקילות בין ערך טי לערך אף*

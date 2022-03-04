@@ -9,16 +9,18 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-![Q1](Q1.png)
+![](Q1.png)
+
+# Q1
 
 **a**
 
 $$
 Reminder\, of \, assumtions:
 \\(1) \sum_{i=1}^I\alpha_i = 0
-\\(2) \sum_{j=1}^I\beta_j = 0
+\\(2) \sum_{j=1}^J\beta_j = 0
 \\(3) \sum_{i=1}^I\gamma_{ij} = 0\,\,\, \forall j
-\\(4) \sum_{j=1}^I\gamma_{ij} = 0\,\,\, \forall i
+\\(4) \sum_{j=1}^J\gamma_{ij} = 0\,\,\, \forall i
 \\\mu_{.j} -\mu = \frac{1}{nI}\sum_{i=1}^I\sum_{k=1}^n(\mu_{ij}) - \mu = \frac{1}{nI}\sum_{i=1}^I\sum_{k=1}^n(\mu +\alpha_i +\beta_j +\gamma_{ij}) - \mu = \frac{1}{nI}nI\mu + \frac{n\sum_{i=1}^I\alpha_i}{nI} + \frac{nI\beta_j}{nI} + \frac{n\sum_{i=1}^I\gamma_{ij}}{nI} - \mu =\\
 =\mu + \frac{\sum_{i=1}^I\alpha_i}{I} + \beta_j + \frac{\sum_{i=1}^I\gamma_{ij}}{I} - \mu := A + \beta_j + C
 \\
@@ -57,4 +59,73 @@ $$
 $$
 
 ![](Q2_1.png)
-![Q2](Q2_2.png)
+![](Q2_2.png)
+
+# Q2
+
+**a**
+
+```{r}
+library(tidyverse)
+library(glue)
+options(dplyr.summarise.inform = FALSE)
+n <-  120
+B <- 1000
+alpha <- 0.05
+treat <- c(rep("A",30),rep("B",30),rep("C",30),rep("D",30))
+get_t <- function(n,treat){
+  outcome <- rnorm(n)
+  tbl <- tibble(outcome = outcome,treat = treat)
+  A <- tbl %>%
+    filter(treat == "A")%>%
+    select(outcome)
+  D <- tbl %>%
+    filter(treat == "D")%>%
+    select(outcome)
+  return(t.test(A,D,var.equal = T)$p.value)
+}
+p_values <- map2_dbl(rep(n,B),replicate(B,treat,F),get_t)
+rejected <- p_values <= alpha
+mean_reject <- mean(rejected)
+glue("we rejected H_0 {round(mean_reject*100,2)} % of the time")
+```
+
+*התוצאה נראית הגיונית שכן נצפה ל5 אחוז דחייה*
+
+**b**
+
+```{r warning=FALSE}
+get_t2 <- function(n,treat){
+  outcome <- rnorm(n)
+  tbl <- tibble(outcome = outcome,treat = treat)
+  group_means <- tbl %>% 
+    group_by(treat)%>%
+    summarize(mean=mean(outcome))
+  min_group_let <- group_means %>%
+    filter(mean == min(mean)) %>%
+    select(treat)
+  max_group_let <- group_means %>%
+    filter(mean == max(mean)) %>%
+    select(treat)
+  Max_group <- tbl %>%
+    filter(treat == max_group_let$treat)%>%
+    select(outcome)
+  Min_group <- tbl %>%
+    filter(treat == min_group_let$treat)%>%
+    select(outcome)
+  return(t.test(Max_group,Min_group,var.equal = T)$p.value)
+}
+p_values2 <- map2_dbl(rep(n,B),replicate(B,treat,F),get_t2)
+rejected2 <- p_values2 <= alpha
+mean_reject2 <- mean(rejected2)
+glue("we rejected H_0 {round(mean_reject2*100,2)} % of the time")
+```
+
+
+*זה לא תואם את המצופה, נצפה שנדחה את השערת ה0 כ5 אחוז מהפעמים אך מכיוון ואנו מכניסים כאן בחירה אנו פוגעים בשמירה על אלפא*
+
+**c**
+
+*לא ניתן לבצע בחירה לאחר הסתכלות בדאטא ואז בדיקת השערות, עלינו לבצע בדיקת השערות מרובה ולבצע תיאום לפי וואליו על מנת לשמור על האלפא הרצוי*
+
+
