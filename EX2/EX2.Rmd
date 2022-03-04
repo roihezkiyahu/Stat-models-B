@@ -1,0 +1,60 @@
+---
+title: "EX2"
+author: "roi hezkiyahu"
+date: "4 3 2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+![Q1](Q1.png)
+
+**a**
+
+$$
+Reminder\, of \, assumtions:
+\\(1) \sum_{i=1}^I\alpha_i = 0
+\\(2) \sum_{j=1}^I\beta_j = 0
+\\(3) \sum_{i=1}^I\gamma_{ij} = 0\,\,\, \forall j
+\\(4) \sum_{j=1}^I\gamma_{ij} = 0\,\,\, \forall i
+\\\mu_{.j} -\mu = \frac{1}{nI}\sum_{i=1}^I\sum_{k=1}^n(\mu_{ij}) - \mu = \frac{1}{nI}\sum_{i=1}^I\sum_{k=1}^n(\mu +\alpha_i +\beta_j +\gamma_{ij}) - \mu = \frac{1}{nI}nI\mu + \frac{n\sum_{i=1}^I\alpha_i}{nI} + \frac{nI\beta_j}{nI} + \frac{n\sum_{i=1}^I\gamma_{ij}}{nI} - \mu =\\
+=\mu + \frac{\sum_{i=1}^I\alpha_i}{I} + \beta_j + \frac{\sum_{i=1}^I\gamma_{ij}}{I} - \mu := A + \beta_j + C
+\\
+\\ (1),(3) \Rightarrow A=C=0 \Rightarrow \mu_{.j} -\mu = \beta_j
+$$
+
+**b**
+
+$$
+\gamma_{ij} = \mu_{ij} - \mu - \alpha_i -  \beta_j = \mu_{ij} - \mu -(\mu_{.j} -\mu) - (\mu_{i.} -\mu) = \mu_{ij} +2\mu - \mu -\mu_{i.} -  \mu_{.j} = \mu_{ij} -\mu_{i.} -  \mu_{.j} + \mu
+$$
+
+**c**
+
+$$
+MSA = \frac{SSA}{I-1} = \frac{nJ\sum_{i=1}^I(\bar Y_{i..} - \bar Y)^2}{I-1}
+\\\bar Y_{i..} - \bar Y = \frac{1}{nJ}\sum_{j=1}^J\sum_{k=1}^nY_{ijk} - \frac{1}{N}\sum_{i=1}^I\sum_{j=1}^J\sum_{k=1}^nY_{ijk}=\frac{1}{nJ}\sum_{j=1}^J\sum_{k=1}^n(\mu + \alpha_i+\beta_j+\gamma_{ij}+\varepsilon_{ijk}) - \frac{1}{N}\sum_{i=1}^I\sum_{j=1}^J\sum_{k=1}^n(\mu + \alpha_i+\beta_j+\gamma_{ij}+\varepsilon_{ijk})=\\
+=\mu +\alpha_i+0+0+\bar \varepsilon_{i..} - (\mu +0 +0 +0 +\bar \varepsilon) = \alpha_i - (\bar \varepsilon + \bar \varepsilon_{i..})\Rightarrow (\bar Y_{i..} - \bar Y)^2 = \alpha_i^2 +2\alpha_i(\bar\varepsilon_{i..} - \bar \varepsilon) + (\bar\varepsilon_{i..} - \bar \varepsilon)^2
+\\E(MSA) = E(\frac{nJ\sum_{i=1}^I(\alpha_i^2 +2\alpha_i(\bar\varepsilon_{i..} - \bar \varepsilon) + (\bar\varepsilon_{i..} - \bar \varepsilon)^2)}{I-1}) = \frac{nJ\sum_{i=1}^I\alpha_i^2}{I-1} + \frac{2nJ\sum_{i=1}\alpha_i E(\bar\varepsilon_{i..} - \bar \varepsilon)}{I-1} + \frac{E(nJ\sum_{i=1}^I(\bar\varepsilon_{i..} - \bar \varepsilon)^2)}{I-1}\\
+(5) \frac{2nJ\sum_{i=1}^I\alpha_i E(\bar\varepsilon_{i..} - \bar \varepsilon)}{I-1} = \frac{nJ\sum_{i=1}^I\alpha_i (-E(\bar \varepsilon) + E(\bar\varepsilon_{i..}))}{I-1} = 0
+\\(6) nJ\sum_{i=1}^I\frac{E((\bar\varepsilon_{i..} - \bar \varepsilon)^2)}{I-1} = nJ\sum_{i=1}^I\frac{V(\bar\varepsilon_{i..} - nJ\sum_{i=1}^I\bar \varepsilon)}{I-1} + nJ\sum_{i=1}^I\frac{(E(\bar\varepsilon_{i..} - \bar \varepsilon))^2}{I-1} = nJ\sum_{i=1}^I\frac{V(\bar\varepsilon_{i..} - \bar \varepsilon)}{I-1} = \\
+=\frac{nJ}{I-1}\sum_{i=1}^I (\frac{\sigma^2}{nJ}-\frac{\sigma^2}{N}) = \frac{nJ}{I-1} \frac{(I-1)\sigma^2}{nJ} = \sigma^2
+\\ E(MSA) =  \frac{nJ\sum_{i=1}^I\alpha_i^2}{I-1} + (5) + (6) = \frac{nJ\sum_{i=1}^I\alpha_i^2}{I-1} + \sigma^2
+$$
+
+**d**
+
+$$
+(7)\,\bar Y = \frac{1}{N}\sum_{i=1}^I\sum_{j=1}^J\sum_{k=1}^nY_{ijk} = \frac{1}{N}\sum_{i=1}^I\sum_{j=1}^J\sum_{k=1}^n \mu + \alpha_i+\beta_j+\gamma_{ij}+\varepsilon_{ijk} = \mu + \bar \varepsilon
+\\(8)\,\bar Y_{i..} = \frac{1}{nJ}\sum_{j=1}^J\sum_{k=1}^nY_{ijk} = \frac{1}{nJ}\sum_{j=1}^J\sum_{k=1}^n \mu + \alpha_i+\beta_j+\gamma_{ij}+\varepsilon_{ijk} = \mu + \alpha_i + \bar \varepsilon_{i..}
+\\(9)\,\bar Y_{.j.} = \frac{1}{nI}\sum_{i=1}^I\sum_{k=1}^nY_{ijk} = \frac{1}{nI}\sum_{i=1}^I\sum_{k=1}^n \mu + \alpha_i+\beta_j+\gamma_{ij}+\varepsilon_{ijk} = \mu + \beta_j + \bar \varepsilon_{.j.}
+\\(10)\,\bar Y_{ij.} = \frac{1}{n}\sum_{k=1}^nY_{ijk} = \frac{1}{n}\sum_{k=1}^n \mu + \alpha_i+\beta_j+\gamma_{ij}+\varepsilon_{ijk} = \mu + \alpha_i + \beta_j + \gamma_{ij} + \bar \varepsilon_{ij.}
+\\(11)\,\bar Y_{i..} - \bar Y = \mu + \alpha_i + \bar \varepsilon_{i..} - \mu - \bar \varepsilon = \alpha_i +\bar \varepsilon_{i..} - \bar \varepsilon
+\\(12)\,\bar Y_{ij.}-\bar Y_{i..}-\bar Y_{.j.}+\bar Y =\gamma_{ij}
+\\(13)\, \sum_{i=1}^I\sum_{j=1}^J(\bar Y_{i..} - \bar Y)(\bar Y_{ij.}-\bar Y_{i..}-\bar Y_{.j.}+\bar Y) = \sum_{i=1}^I\sum_{j=1}^J(11)(12) = \sum_{i=1}^I\sum_{j=1}^J\gamma_{ij}(\alpha_i +\bar \varepsilon_{i..} - \bar \varepsilon) = \sum_{i=1}^I(0(\alpha_i +\bar \varepsilon_{i..} - \bar \varepsilon)) = 0
+$$
+
+![](Q2_1.png)
+![Q2](Q2_2.png)
