@@ -18,17 +18,7 @@ When you click the **Knit** button a document will be generated that includes bo
 # Q.1 
 
 ![](Q1.png)
-
-$$
-\textrm{lets take a look at the following expression:} 
-\\ Pr(\cup_{m=1}^MA_m) \le \sum_{m=1}^MPr(A_m)
-\\ the \,RHS=LHS \,\, iff  \, A_i,A_j  \, are  \, independet  \, \,\forall i,j
-\\ \textrm{thus we only need to prove for the case where } A_i,A_j \textrm{ are independet}
-\\ \textrm{in this case:}
-\\FWER = Pr_{H_0}(R > 0) =1 - \Pi_{i=1}^MPr_{H_0}(R_i= 0) = 1- (1-\alpha^*)^m  \Rightarrow 1- FWER = (1-\alpha^*)^m \Rightarrow
-\\ (1- FWER)^{\frac{1}{m}} = 1- \alpha^* \Rightarrow \alpha^* = 1-(1- FWER)^{\frac{1}{m}} > 1-(1- FWER) = FWER
-$$
-
+![](S1.png)
 
 # Q.2
 
@@ -230,7 +220,80 @@ glue("we can see in this graph that the lines are not parallel meaning we have a
 ![](Q5_a.png)
 ![](Q5_b.png)
 
-```{r}
+**a**
 
+```{r}
+bike <- read_csv("bike.csv")
+bike <- bike %>%
+  mutate(across(c(Rainfall,Snowfall,Humidity_percent),as.factor))
+
+t_test_pval <- function(formula){
+  #checks equality assumption and based on that conducts the test
+  f_test_pv <- var.test(formula)$p.value
+  if (f_test_pv > 0.05){
+    return(t.test(formula)$p.value)
+  }
+  return(t.test(formula)$p.value)
+}
+bike_tibl <- tibble(values = rep(c("Rented_Bikes","Wind_speed","Solar_Radiation","Visibility"),each = 3),
+       groups = rep(c("Rainfall","Snowfall","Humidity_percent"),4))
+bike_tibl <- bike_tibl %>%
+  rowwise() %>%
+  mutate(pval = t_test_pval(pull(bike,values)~pull(bike,groups)))
+glue("pvalues before correction are:")
+bike_tibl
 ```
 
+**b** 
+```{r}
+bike_tibl$pval_adjust_BH = p.adjust(bike_tibl$pval,method = "BH")
+bike_tibl$BH_conc <- ifelse(bike_tibl$pval_adjust_BH<0.05,"Reject","don't reject")
+bike_tibl
+```
+
+**c**
+```{r}
+adj_pv <- function(vec,alpha,index){
+  bool_vec = vec<=alpha
+  M <- length(bool_vec)
+  if (index > 1) {bool_vec[1:index-1] = FALSE}
+  if (sum(bool_vec) == 0){return(min(vec[index:M]))}
+  nex_rej <- min(which(bool_vec))
+  return(vec[nex_rej])
+}
+my_bh <- function(vec,alpha = 0.05){
+  ord <- order(vec)
+  sorted_vec <- sort(vec)
+  M <- length(vec)
+  k <- 1:M
+  corrected_alphas <- k/M*alpha
+  corrected_pvals <- c()
+  for (i in k){
+    corrected_pvals[i] <- adj_pv(sorted_vec*M/k,alpha,i)
+  }
+  return(ifelse(corrected_pvals >1 ,1 ,corrected_pvals)[order(ord)])
+}
+
+bike_tibl$pval_adjust_my_BH = my_bh(bike_tibl$pval)
+bike_tibl$my_BH_conc <- ifelse(bike_tibl$pval_adjust_my_BH<0.05,"Reject","don't reject")
+bike_tibl %>%
+  dplyr::select(values,groups,pval_adjust_my_BH,my_BH_conc)
+```
+
+**d**
+
+```{r}
+bonf_pval <- bike_tibl$pval* length(bike_tibl$pval)
+bike_tibl$p_adjusted_bonf <- ifelse(bonf_pval>1,1,bonf_pval)
+bike_tibl$bonf_conc <- ifelse(bike_tibl$p_adjusted_bonf<0.05,"Reject","don't reject")
+bike_tibl %>%
+  dplyr::select(values,groups,p_adjusted_bonf,bonf_conc)
+```
+
+**בינימיני הוכברג שולטת על ה**
+
+**FDR**
+
+**כלומר על אחוז ההשערות שדחינו אך לא היינו אמורים לדחות**
+
+**לעומת זאת בונפריני שומר על כך שלא נעשה כלל טעות מסוג ראשון בסיכוי אלפא**
