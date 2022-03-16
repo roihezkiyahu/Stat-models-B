@@ -550,8 +550,8 @@ summary(aov_model)</code></pre>
 ## Residuals   115   8339    72.5                     
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<pre class="r"><code>glue(&quot;we can reject the null and conclude at a confidance level of 95% that RAce effects the Combined score&quot;)</code></pre>
-<pre><code>## we can reject the null and conclude at a confidance level of 95% that RAce effects the Combined score</code></pre>
+<pre class="r"><code>glue(&quot;we can reject the null and conclude at a confidance level of 95% that Race effects the Combined score&quot;)</code></pre>
+<pre><code>## we can reject the null and conclude at a confidance level of 95% that Race effects the Combined score</code></pre>
 <pre class="r"><code>#assumptions
 glue(&quot;we assume equal variance&quot;)</code></pre>
 <pre><code>## we assume equal variance</code></pre>
@@ -569,6 +569,55 @@ glue(&quot;pvalue for levene test is {round(levene_test$p.value,4)} therefore we
 <pre><code>## looks ok</code></pre>
 <pre class="r"><code>glue(&quot;we also assume independece but we cant check it&quot;)</code></pre>
 <pre><code>## we also assume independece but we cant check it</code></pre>
+<p><strong>b</strong></p>
+<pre class="r"><code>contr &lt;- rbind(
+  &quot;Race H - Race B&quot; = c(-1,1,0),
+  &quot;Race W - Race B&quot; = c(-1,0,1),
+  &quot;Race W - Race H&quot; = c(0,-1,1)
+)
+pair_wise &lt;- glht(aov_model, linfct = mcp(Race = contr))
+glue(&quot;bonferroni method results:&quot;)</code></pre>
+<pre><code>## bonferroni method results:</code></pre>
+<pre class="r"><code>summary(pair_wise, test = adjusted(type = &quot;bonf&quot;))</code></pre>
+<pre><code>## 
+##   Simultaneous Tests for General Linear Hypotheses
+## 
+## Multiple Comparisons of Means: User-defined Contrasts
+## 
+## 
+## Fit: aov(formula = Combine ~ Race, data = Ricci)
+## 
+## Linear Hypotheses:
+##                      Estimate Std. Error t value Pr(&gt;|t|)    
+## Race H - Race B == 0    1.600      2.416   0.662  1.00000    
+## Race W - Race B == 0    8.941      1.937   4.616 3.08e-05 ***
+## Race W - Race H == 0    7.341      2.054   3.574  0.00155 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## (Adjusted p values reported -- bonferroni method)</code></pre>
+<pre class="r"><code>glue(&quot;Tukey method results:&quot;)</code></pre>
+<pre><code>## Tukey method results:</code></pre>
+<pre class="r"><code>summary(glht(aov_model, mcp(Race = &quot;Tukey&quot;)), test = univariate())</code></pre>
+<pre><code>## 
+##   Simultaneous Tests for General Linear Hypotheses
+## 
+## Multiple Comparisons of Means: Tukey Contrasts
+## 
+## 
+## Fit: aov(formula = Combine ~ Race, data = Ricci)
+## 
+## Linear Hypotheses:
+##            Estimate Std. Error t value Pr(&gt;|t|)    
+## H - B == 0    1.600      2.416   0.662 0.509167    
+## W - B == 0    8.941      1.937   4.616 1.03e-05 ***
+## W - H == 0    7.341      2.054   3.574 0.000515 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## (Univariate p values reported)</code></pre>
+<pre class="r"><code>glue(&quot;we can conculde from both methods that there is a difference between: whites and blacks, whites and hispanics for FWER = 0.05 &quot;)</code></pre>
+<pre><code>## we can conculde from both methods that there is a difference between: whites and blacks, whites and hispanics for FWER = 0.05</code></pre>
+<p><strong>c</strong></p>
+<p>המסקנות שקיבלנו הן שיש הבדל בציון בין קבוצות הגזע השונות,ניתן ללמוד כי המבחן מפלה לרעה את אוכלסויית השחורים וההספנים</p>
 </div>
 <div id="q.4" class="section level1">
 <h1>Q.4</h1>
