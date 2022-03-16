@@ -6,14 +6,8 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE,message = FALSE)
 ```
-
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 # Q.1 
 
@@ -95,7 +89,7 @@ contr <- rbind(
   "Race W - Race B" = c(-1,0,1),
   "Race W - Race H" = c(0,-1,1)
 )
-aov_model <-aov(Combine ~ Race,data = Ricci)
+aov_model <-no_inter_model
 pair_wise <- glht(aov_model, linfct = mcp(Race = contr))
 glue("bonferroni method results:")
 summary(pair_wise, test = adjusted(type = "bonf"))
@@ -121,7 +115,47 @@ glue(" the difference is {mean(W_C) - mean(B_C)} which is the same as in the tes
 ![](Q3_A.png)
 ![](Q3_b.png)
 
-**זה זהה לשאלה 2...**
+**a**
+
+```{r}
+aov_model <- aov(Combine~Race,data = Ricci)
+summary(aov_model)
+glue("we can reject the null and conclude at a confidance level of 95% that Race effects the Combined score")
+
+#assumptions
+glue("we assume equal variance")
+levene_test <-levene.test(Ricci$Combine,Ricci$Race,location = "mean")
+glue("pvalue for levene test is {round(levene_test$p.value,4)} therefore we will not reject the null and conclude equal varicane")
+
+glue("we assume normality of the residuals")
+ggplot(Ricci,aes(sample = Combine - predict(lm(Combine~Race,data = Ricci),Ricci[c("Position","Race")]))) +
+  stat_qq()+
+  stat_qq_line()+
+  ggtitle("error normality check")
+
+glue("looks ok")
+glue("we also assume independece but we cant check it")
+```
+
+**b**
+
+```{r}
+contr <- rbind(
+  "Race H - Race B" = c(-1,1,0),
+  "Race W - Race B" = c(-1,0,1),
+  "Race W - Race H" = c(0,-1,1)
+)
+pair_wise <- glht(aov_model, linfct = mcp(Race = contr))
+glue("bonferroni method results:")
+summary(pair_wise, test = adjusted(type = "bonf"))
+glue("Tukey method results:")
+summary(glht(aov_model, mcp(Race = "Tukey")), test = univariate())
+glue("we can conculde from both methods that there is a difference between: whites and blacks, whites and hispanics for FWER = 0.05 ")
+```
+
+**c**
+
+המסקנות שקיבלנו הן שיש הבדל בציון בין קבוצות הגזע השונות,ניתן ללמוד כי המבחן מפלה לרעה את אוכלסויית השחורים וההספנים
 
 # Q.4 
 
