@@ -26,7 +26,7 @@ E(\bar Y) = E[\frac{1}{N}\sum_i\sum_j\sum_k (\mu + \alpha_i + \beta_j +\varepsil
 \\
 V(\bar Y) = \frac{1}{N^2}V[\sum_i\sum_j\sum_k (\mu + \alpha_i + \beta_j +\varepsilon_{ijk})] = \frac{1}{N^2}V[\sum_i\sum_j\sum_k (\alpha_i +\varepsilon_{ijk})] = \frac{1}{N^2}[V(\sum_i\sum_j\sum_k \alpha_i) + V(\sum_i\sum_j\sum_k\varepsilon_{ijk})]=
 \\
-=\frac{1}{N^2} [n^2J^2\sum_i V(\alpha_i) + n^2J^22Cov(\sum_i \alpha_i,\sum_i \alpha_i) + N\sigma_{\varepsilon}^2] = 
+=\frac{1}{N^2} [n^2J^2\sum_i V(\alpha_i) + N\sigma_{\varepsilon}^2] = 
 \\
 \frac{1}{N^2}[NnJ\sigma_\alpha^2 + N\sigma_{\varepsilon}^2] = \frac{\sigma_{\varepsilon}^2 + nJ\sigma_\alpha^2}{N}\\
 \textrm{thus we get } \bar Y \sim N(\mu + \frac{1}{J}\sum_j\beta_j,\frac{\sigma_{\varepsilon}^2 + nJ\sigma_\alpha^2}{N})
