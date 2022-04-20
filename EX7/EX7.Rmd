@@ -57,6 +57,7 @@ $$
 ## b
 
 ```{r}
+model_summary = summary(model)
 #model intercept
 inter <- 98.849 #from summary
 #B
@@ -189,9 +190,32 @@ $$
 
 ## a
 
+```{r}
+MI <- read.csv("MI_PracticeDataset.csv") %>%
+  dplyr::select(Sex,CVDeath_2012)
+pr_death_man <-  mean(MI[MI$Sex==1,]$CVDeath_2012)
+pr_death_woman <-  mean(MI[MI$Sex==2,]$CVDeath_2012)
+RD <- pr_death_man - pr_death_woman
+RR <- pr_death_man/pr_death_woman
+OR <- (pr_death_man/(1-pr_death_man))/(pr_death_woman/(1-pr_death_woman))
+glue("RD:{RD}
+     RR:{RR}
+     OR:{OR}")
+```
+
+
 ## b
+
+*the RD estimates suggests that a man has 7% lower chance of dying from myocardial infection*
+
+*the RR estimates suggests that a man chance of dying from myocardial infection is 72.5% of the chance woman has*
+
+*the OR estimates suggests that a man chance of dying from myocardial infection compared to not getting an infection is 66% of the chance woman has*
 
 ## c
 
+*RD is good to use because it tells us that man has 7% less chance of dying from myocardial infection*
 
+*RR by its own does not give us much information it tells us that a man chance of dying from myocardial infection is 72.5% of the chance woman has, but if woman chance is low then this does not provide us important information*
 
+*OR is good to use because it tell us that man are less prone to dying from myocardial infection*
