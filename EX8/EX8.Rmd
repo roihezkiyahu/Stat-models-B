@@ -225,6 +225,33 @@ glue("CI for dying chance is: ({c_i[1]*100}%,{c_i[2]*100}%)")
 
 
 ```{r}
-model_ב <- glm(CVDeath_2012~Age,data = MI,family = "binomial")
+MI <- MI %>%
+  mutate(Age_saqured = Age^2)
+model_c<- glm(CVDeath_2012~Age + Age_saqured ,data = MI,family = "binomial")
+summary(model_c)
+```
+
+$$
+\textrm{we can see that: }age^2 \textrm{ is non significant}
+$$
+
+
+
+```{r}
+coef_mat_c <- tidy(model_c)
+beta_hat_c <- coef_mat_c$estimate
+diff_vec_40_50 <- c(10,50^2-40^2)
+diff_vec_50_60 <- c(10,60^2-50^2)
+#point estimates
+pe_40_50 <- as.numeric(beta_hat_c[c(2,3)]%*%diff_vec_40_50)
+#point estimates
+pe_50_60 <- as.numeric(beta_hat_c[c(2,3)]%*%diff_vec_50_60)
+#variance estimation:
+v_40_50 <- as.numeric(sqrt(diff_vec_40_50 %*% vcov(model_c)[c(2,3),c(2,3)] %*% diff_vec_40_50))
+v_50_60 <- as.numeric(sqrt(diff_vec_50_60 %*% vcov(model_c)[c(2,3),c(2,3)] %*% diff_vec_50_60))
+glue("the OR estimate for comparing age 40 to 50 is: {round(exp(pe_40_50),3)}
+     and the CI is ({round(exp(pe_40_50 -  qnorm(0.975)*v_40_50),3)},{round(exp(pe_40_50 +qnorm(0.975)*v_40_50),3)})
+     the OR estimate for comparing age 50 to 60 is: {round(exp(pe_50_60),3)}
+     and the CI is ({round(exp(pe_50_60 -  qnorm(0.975)*v_50_60),3)},{round(exp(pe_50_60 +qnorm(0.975)*v_50_60),3)})")
 ```
 
