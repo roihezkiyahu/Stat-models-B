@@ -58,7 +58,7 @@ $$
 
 ```{r}
 #logit function
-logit <- function(p){log(p)/log(1-p)}
+logit <- function(p){log(p/(1-p))}
 #create values
 p_values <- seq(0,1,length.out=1002)[2:1001]
 #calculate log values
@@ -75,11 +75,10 @@ tbl %>%
   labs(x = "p",
        y = "dunction value",
        color = "Legend")+
-  scale_color_manual(values = c("logit_p" = "red","log_p" = "blue"))+
-  ylim(-10,30)
+  scale_color_manual(values = c("logit_p" = "red","log_p" = "blue"))
 ```
 
-*we can see from the graph that when p increases the distance between the 2 functions decreases and the lines are rather close from p>0.5, this is exactly our conclusion on the last question*
+*we can see from the graph that when p increases the distance between the 2 functions increases and the lines are rather close from p<0.25, this is exactly our conclusion on the last question*
 
 
 **e**
@@ -88,8 +87,8 @@ tbl %>%
 ```{r}
 d_dist <- function(d){
   potienal_p <- seq(0.0000005,1,0.0000005)
-  for (i in (length(potienal_p)-1):1) {
-    p = potienal_p[i]
+  for (i in (1:length(potienal_p))) {
+    p <-  potienal_p[i]
     if (logit(p)-log(p)>d){
       return(potienal_p[i+1])
     }
@@ -117,7 +116,7 @@ expit(\beta^ty) = \frac{e^{\beta^ty}}{1+e^{\beta^ty}} = \frac{e^{\beta_{-k}^ty_{
 \\
 \frac{Pr(Y=1|X=y)}{1-Pr(Y=1|X=y)} = \ldots \textrm{same as above}\ldots = e^{\beta_{-k}^tx_{-k}}e^{\beta_kx_k}e^{\beta_k}
 \\
-OR = \frac{\frac{Pr(Y=1|X=x)}{1-Pr(Y=1|X=x)}}{\frac{Pr(Y=1|X=y)}{1-Pr(Y=1|X=y)}} = \frac{e^{\beta_{-k}^tx_{-k}}e^{\beta_kx_k}}{e^{\beta_{-k}^tx_{-k}}e^{\beta_kx_k}e^{\beta_k}} = e^{\beta_k}
+OR = \frac{\frac{Pr(Y=1|X=y)}{1-Pr(Y=1|X=y)}}{\frac{Pr(Y=1|X=x)}{1-Pr(Y=1|X=x)}} = \frac{e^{\beta_{-k}^tx_{-k}}e^{\beta_kx_k}e^{\beta_k}}{e^{\beta_{-k}^tx_{-k}}e^{\beta_kx_k}} = e^{\beta_k}
 $$
 
 
@@ -139,7 +138,7 @@ model <- glm(CVDeath_2012~Sex,data = MI,family = "binomial")
 summary(model)
 ```
 
-*the model is not saturated because we have more data points then parameters*
+*sex is has discrete values thus the model is saturated*
 
 *we can see that sex has a large effect on CVDeath_2012, where woman has a higher chance to die*
 
@@ -148,7 +147,7 @@ $$
 OR = e^{\beta_1} = e^{0.41461} \approx 1.51378, \textrm{it is the same as the previous exercise results}
 $$
 
-*the OR estimates suggests that a man chance of dying from myocardial infection compared to not getting an infection is 151% of the chance woman has*
+*the OR estimates suggests that a woman chance of dying from myocardial infection compared to not getting an infection is 151% of the chance man has*
 
 
 ```{r}
